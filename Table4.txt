@@ -1,0 +1,93 @@
+USE 
+
+--------------------------------------------------------------------------------------------------------------------------------
+--[dbo].[Products]
+IF  EXISTS (SELECT * FROM sys.objects WHERE name = 'Products')
+	DROP TABLE [dbo].[Products]
+
+
+CREATE TABLE Products (
+ProductID		integer		NOT NULL	PRIMARY KEY CONSTRAINT ProductID CHECK (ProductID>0),
+ProductName		varchar(50)	NOT NULL,						
+SupplierID		integer		NOT NULL,
+CategoryID		integer		NOT NULL,
+QuantityPerUnit		integer		NOT NULL,
+UnitPrice		decimal(10,2)	NOT NULL	CONSTRAINT UnitPrice CHECK (UnitPrice>0),
+UnitsInStock		integer		NOT NULL,
+UnitsOnOrder		integer				DEFAULT '0'	)
+
+--------------------------------------------------------------------------------------------------------------------------------
+--[dbo].[Employees]
+IF  EXISTS (SELECT * FROM sys.objects WHERE name = 'Employees')
+	DROP TABLE [dbo].[Employees]
+
+CREATE TABLE Employees (
+EmpID			integer		NOT NULL	PRIMARY KEY CONSTRAINT EmpID CHECK (EmpID>0),		
+LastName		varchar(50)	NOT NULL,
+FirstName		varchar(50)	NOT NULL,
+Title			varchar(50)	NOT NULL,
+HireDate		Date		NOT NULL,
+Office			varchar(50)	NOT NULL,
+Extension		varchar(50)	NOT NULL,
+Reports_To		varchar(50)	NULL,
+Year_Salary		Date		NOT NULL )
+
+--------------------------------------------------------------------------------------------------------------------------------
+--[dbo].[Customers]
+IF  EXISTS (SELECT * FROM sys.objects WHERE name = 'Customers')
+	DROP TABLE [dbo].[Customers]
+
+CREATE TABLE Customers (
+CustomerID		integer		NOT NULL	PRIMARY KEY CONSTRAINT CustomerID 	CHECK (CustomerID>0),
+CompanyName		varchar(100)	NOT NULL	CONSTRAINT NameFirst			CHECK (NameFirst LIKE %[A-Z]%),	
+ContactName		varchar(100)	NOT NULL	CONSTRAINT NameLast			CHECK (NameLast LIKE %[A-Z]%),
+Address			varchar(100)	NOT NULL,					
+City			varchar(50)	NOT NULL	CONSTRAINT Country			CHECK (Country LIKE %[A-Z]%),
+PostalCode		varchar(100)	NOT NULL,
+Country			varchar(50)	NOT NULL,
+Phone			varchar(50)	NOT NULL,
+Fax			varchar(50)	NULL )
+
+--------------------------------------------------------------------------------------------------------------------------------
+--[dbo].[Orders]
+IF  EXISTS (SELECT * FROM sys.objects WHERE name = 'Orders')
+	DROP TABLE [dbo].[Orders]
+
+
+CREATE TABLE Orders (
+OrderID			integer		NOT NULL	PRIMARY KEY CONSTRAINT OrderID CHECK (OrderID>0),
+OrderDate		Date		NOT NULL,
+CustomerID		integer				FOREIGN KEY REFERENCES [dbo].[Customers] (CustomerID),
+EmployeeID		integer				FOREIGN KEY REFERENCES [dbo].[Employees] (EmpID),
+ShipperID		integer		NOT NULL,	
+Freight			decimal(10,2)	NOT NULL )
+
+--------------------------------------------------------------------------------------------------------------------------------
+--[dbo].[OrderDetails]
+IF  EXISTS (SELECT * FROM sys.objects WHERE name = 'OrderDetails')
+	DROP TABLE [dbo].[OrderDetails]
+
+CREATE TABLE OrderDetails (
+OrderID			integer				FOREIGN KEY REFERENCES [dbo].[Orders] (OrderID),
+ProductID		integer				FOREIGN KEY REFERENCES [dbo].[Products] (ProductID),
+UnitPrice		decimal(10,2)	NOT NULL,	
+Quantity		integer		NOT NULL,
+Discount		decimal(10,2)			DEFAULT '0.00'	
+PRIMARY KEY (OrderID, ProductID) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
